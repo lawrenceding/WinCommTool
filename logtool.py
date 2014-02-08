@@ -112,8 +112,8 @@ def main(argv):
                     toogle_color = False
                     console_color.reset_color()
                     logger.info(s)
-                #console.print_green_text(start_time)
-                #print s
+                # console_color.print_green_text(start_time)
+                # print s
     except:
         print 'Ctrl+C pressed'
     ser.close()
