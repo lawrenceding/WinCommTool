@@ -6,6 +6,7 @@ import serial
 from Color import *
 from datetime import datetime
 import string   #convert from string to integer
+import logging  
 
 print 'CommTool V0.1'
 print 'Ctrl+C to exit'
@@ -39,7 +40,33 @@ def main(argv):
         else:
             print 'Wrong pararmeters, try python logging.py -h'
 
+
+
+    logger = logging.getLogger('simple_example')
+    logger.setLevel(logging.DEBUG)
+    # create file handler which logs even debug messages
+    fh = logging.FileHandler('spam.log')
+    fh.setLevel(logging.DEBUG)
+    # create console handler with a higher log level
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.ERROR)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+    # add the handlers to logger
+    logger.addHandler(ch)
+    logger.addHandler(fh)
+
     console = Color()
+
+    # 'application' code
+    logger.debug('debug message')
+    logger.info('info message')
+    logger.warn('warn message')
+    logger.error('error message')
+    logger.critical('critical message')
+
     try:
         ser = serial.Serial(port-1, baud, timeout=0)
         print ser
