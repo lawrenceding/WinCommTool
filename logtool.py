@@ -14,7 +14,7 @@ print 'Ctrl+C to exit'
 def main(argv):
     port = 1
     baud = 115200
-    outputfile = ''
+    outputfile = 'RF6.log'
     try:
         opts, args = getopt.getopt(argv,"hp:o:b:",["port=","baudrate=","output="])
     except getopt.GetoptError:
@@ -25,7 +25,7 @@ def main(argv):
     for opt, arg in opts:
         # print opt, args #debug only  
         if opt == '-h':
-            print 'python logging.py -p <uartport> -o <outputfile>'
+            print 'python logtool.py -p <uartport> -o <outputfile>'
             sys.exit()
         elif opt in ("-p", "--port"):
             port = string.atoi(arg)
@@ -38,42 +38,44 @@ def main(argv):
         elif opt in ("-o", "--output"):
             outputfile = arg
         else:
-            print 'Wrong pararmeters, try python logging.py -h'
+            print 'Wrong pararmeters, try python logtool.py -h'
 
 
 
-    logger = logging.getLogger('simple_example')
+    logger = logging.getLogger('RF6')
     logger.setLevel(logging.DEBUG)
     # create file handler which logs even debug messages
-    fh = logging.FileHandler('spam.log')
+    fh = logging.FileHandler(outputfile)
     fh.setLevel(logging.DEBUG)
     # create console handler with a higher log level
     ch = logging.StreamHandler()
-    ch.setLevel(logging.ERROR)
+    ch.setLevel(logging.DEBUG)
     # create formatter and add it to the handlers
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(message)s')
     ch.setFormatter(formatter)
     fh.setFormatter(formatter)
     # add the handlers to logger
     logger.addHandler(ch)
     logger.addHandler(fh)
 
-    console = Color()
+    console_color = Color()
 
     # 'application' code
-    logger.debug('debug message')
-    logger.info('info message')
-    logger.warn('warn message')
-    logger.error('error message')
-    logger.critical('critical message')
+    #logger.debug('debug message')
+    #logger.info('info message')
+    #logger.warn('warn message')
+    #logger.error('error message')
+    #logger.critical('critical message')
 
     try:
         ser = serial.Serial(port-1, baud, timeout=0)
-        print ser
+        #print ser
     except:
         print 'Can\'t open uart', port
         sys.exit()
 
+    toogle_color = False
     try:
         while True:
             start_time = datetime.now()
@@ -91,11 +93,20 @@ def main(argv):
                     if idle_time.microseconds > 10000:
                         break
             if s != '':
-                console.print_green_text(start_time)
-                print s
+                if not toogle_color:
+                    toogle_color = True
+                    console_color.set_cmd_color(FOREGROUND_GREEN | FOREGROUND_INTENSITY)
+                    logger.info(s)
+                else:
+                    toogle_color = False
+                    console_color.reset_color()
+                    logger.info(s)
+                #console.print_green_text(start_time)
+                #print s
     except:
         print 'Ctrl+C pressed'
     ser.close()
+    console_color.reset_color()
     print 'Exit'
 
 if __name__ == "__main__":
