@@ -8,24 +8,30 @@ from datetime import datetime
 import string   #convert from string to integer
 import logging  
 
-print 'CommTool V0.1'
-print 'Ctrl+C to exit'
-
 def main(argv):
     port = 1
     baud = 115200
     outputfile = 'RF6.log'
     try:
-        opts, args = getopt.getopt(argv,"hp:o:b:",["port=","baudrate=","output="])
+        opts, args = getopt.getopt(argv,"hp:o:b:",["help=","port=","baudrate=","output="])
     except getopt.GetoptError:
-        print 'python logging.py -p <uartport> -o <outputfile>'
+        print 'Wrong arguments, try: python logtool.py -h'
         sys.exit(2)
 
     #parse the parameters input form console
     for opt, arg in opts:
         # print opt, args #debug only  
-        if opt == '-h':
-            print 'python logtool.py -p <uartport> -o <outputfile>'
+        if opt in ("-h", "--help"):
+            print 'Usage: python logtool.py [OPTION]... [FILE]...'
+            print 'Example: '
+            print 'python logtool.py -p 1                           open uart 1 to catch log, baudrate is 115200(default), output is RF6.log'
+            print 'python logtool.py -p 1 -b 9600                   open uart 1 to catch log, baudrate is 9600, outputfile is RF6.log'
+            print 'python logtool.py -p 1 -b 9600 -o RF6CT.log      open uart 1 to catch log, baudrate is 9600, outputfile is RF6CT.log'
+            print '                                                                                                           '
+            print 'Mandatory arguments to long options are mandatory for short options too.'
+            print '-p, --port                       Uart port number'
+            print '-b, --baudrate                   Baudrate for selected port'
+            print '-o, --output                     Output file for storing the log'
             sys.exit()
         elif opt in ("-p", "--port"):
             port = string.atoi(arg)
@@ -38,9 +44,10 @@ def main(argv):
         elif opt in ("-o", "--output"):
             outputfile = arg
         else:
-            print 'Wrong pararmeters, try python logtool.py -h'
+            print 'Wrong pararmeters, try: python logtool.py -h'
 
-
+    print 'CommTool V0.1'
+    print 'Ctrl+C to exit'
 
     logger = logging.getLogger('RF6')
     logger.setLevel(logging.DEBUG)
