@@ -11,9 +11,9 @@ import logging
 def main(argv):
     port = 1
     baud = 115200
-    outputfile = 'RF6.log'
+    outputfile = 'log.log'
     try:
-        opts, args = getopt.getopt(argv,"hp:o:b:",["help=","port=","baudrate=","output="])
+        opts, args = getopt.getopt(argv,"hp:o:b:",["help","port=","baudrate=","output="])
     except getopt.GetoptError:
         print 'Wrong arguments, try: python logtool.py -h'
         sys.exit(2)
@@ -23,15 +23,19 @@ def main(argv):
         # print opt, args #debug only  
         if opt in ("-h", "--help"):
             print 'Usage: python logtool.py [OPTION]... [FILE]...'
+            print 'python logtool.py -p <port> -b <baudrate> -o <logfile>'
+            print 'If the <args> are not set, the default values are used:'
+            print 'port = 1, baudrate = 115200, logfile = log.log'
             print 'Example: '
-            print 'python logtool.py -p 1                           open uart 1 to catch log, baudrate is 115200(default), output is RF6.log'
-            print 'python logtool.py -p 1 -b 9600                   open uart 1 to catch log, baudrate is 9600, outputfile is RF6.log'
-            print 'python logtool.py -p 1 -b 9600 -o RF6CT.log      open uart 1 to catch log, baudrate is 9600, outputfile is RF6CT.log'
+            print 'python logtool.py -p 2'
+            print 'python logtool.py -p 1 -b 9600'
+            print 'python logtool.py -p 1 -b 9600 -o mylog.log'
             print '                                                                                                           '
             print 'Mandatory arguments to long options are mandatory for short options too.'
             print '-p, --port                       Uart port number'
             print '-b, --baudrate                   Baudrate for selected port'
             print '-o, --output                     Output file for storing the log'
+            print '-h, --help                       Help doc'
             sys.exit()
         elif opt in ("-p", "--port"):
             port = string.atoi(arg)
@@ -49,7 +53,7 @@ def main(argv):
     print 'CommTool V0.1'
     print 'Ctrl+C to exit'
 
-    logger = logging.getLogger('RF6')
+    logger = logging.getLogger('LOG')
     logger.setLevel(logging.DEBUG)
     # create file handler which logs even debug messages
     fh = logging.FileHandler(outputfile)
