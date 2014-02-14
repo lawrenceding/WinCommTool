@@ -30,12 +30,14 @@ def main(argv):
             print 'python logtool.py -p 2'
             print 'python logtool.py -p 1 -b 9600'
             print 'python logtool.py -p 1 -b 9600 -o mylog.log'
-            print '                                                                                                           '
+            print ''
             print 'Mandatory arguments to long options are mandatory for short options too.'
             print '-p, --port                       Uart port number'
             print '-b, --baudrate                   Baudrate for selected port'
             print '-o, --output                     Output file for storing the log'
             print '-h, --help                       Help doc'
+            print ''
+            print 'python -m serial.tools.list_ports    --show the avaliable uart ports'
             sys.exit()
         elif opt in ("-p", "--port"):
             port = string.atoi(arg)
