@@ -7,6 +7,7 @@ from Color import *
 from datetime import datetime
 import string   #convert from string to integer
 import logging  
+import time
 
 def main(argv):
     port = 1
@@ -103,6 +104,7 @@ def main(argv):
                     s += ser.read(num)
                 else:
                     idle_time = cur_time - last_time
+                    time.sleep(0.001)
                     if idle_time.microseconds > 10000:
                         break
             if s != '':
