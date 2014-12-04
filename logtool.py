@@ -8,13 +8,46 @@ from datetime import datetime
 import string   #convert from string to integer
 import logging  
 import time
+import glob
+
+def serial_ports():
+    """Lists serial ports
+
+    :raises EnvironmentError:
+        On unsupported or unknown platforms
+    :returns:
+        A list of available serial ports
+    """
+    if sys.platform.startswith('win'):
+        ports = ['COM' + str(i + 1) for i in range(256)]
+
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this is to exclude your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+
+    else:
+        raise EnvironmentError('Unsupported platform')
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result
 
 def main(argv):
     port = 1
     baud = 115200
     outputfile = 'log.log'
+    print 'CommTool V0.2'
     try:
-        opts, args = getopt.getopt(argv,"hp:o:b:",["help","port=","baudrate=","output="])
+        opts, args = getopt.getopt(argv,"hlp:o:b:",["help","list","port=","baudrate=","output="])
     except getopt.GetoptError:
         print 'Wrong arguments, try: python logtool.py -h'
         sys.exit(2)
@@ -37,6 +70,7 @@ def main(argv):
             print '-b, --baudrate                   Baudrate for selected port'
             print '-o, --output                     Output file for storing the log'
             print '-h, --help                       Help doc'
+            print '-l, --list                       List avaliable com ports'
             print ''
             print 'python -m serial.tools.list_ports    --show the avaliable uart ports'
             sys.exit()
@@ -50,10 +84,12 @@ def main(argv):
             print 'baud', baud
         elif opt in ("-o", "--output"):
             outputfile = arg
+        elif opt in ("-l", "--list"):
+			print(serial_ports())
+			sys.exit(2)
         else:
             print 'Wrong pararmeters, try: python logtool.py -h'
 
-    print 'CommTool V0.1'
     print 'Ctrl+C to exit'
 
     logger = logging.getLogger('LOG')
@@ -125,4 +161,4 @@ def main(argv):
     print 'Exit'
 
 if __name__ == "__main__":
-   main(sys.argv[1:])   #remove the first parameter, it is the python file itself
+	main(sys.argv[1:])   #remove the first parameter, it is the python file itself
