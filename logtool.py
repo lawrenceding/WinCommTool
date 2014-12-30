@@ -3,6 +3,7 @@
 # "python -m serial.tools.list_ports" can be used to list all avaliable ports
 import sys, getopt  #import this to check the input from console as the parameters of this script
 import serial
+import serial.tools.list_ports
 from Color import *
 from datetime import datetime
 import string   #convert from string to integer
@@ -41,11 +42,25 @@ def serial_ports():
             pass
     return result
 
+def list_ports():
+    for port, desc, hwid in sorted(serial.tools.list_ports.comports()):
+        #print "%s: %s [%s]" % (port, desc, hwid)
+        print port,
+        ser_port = int(port[3]) - 1
+        try:
+            ser = serial.Serial(ser_port)
+            ser.close()
+            print ":[UN-USED]"
+        except (OSError, serial.SerialException):
+            print ":[USED]"
+            pass
+    sys.exit(2)
+
 def main(argv):
     port = 1
     baud = 115200
     outputfile = 'log.log'
-    print 'CommTool V0.2'
+    print 'CommTool V0.3'
     try:
         opts, args = getopt.getopt(argv,"hlp:o:b:",["help","list","port=","baudrate=","output="])
     except getopt.GetoptError:
@@ -72,7 +87,7 @@ def main(argv):
             print '-h, --help                       Help doc'
             print '-l, --list                       List avaliable com ports'
             print ''
-            print 'python -m serial.tools.list_ports    --show the avaliable uart ports'
+            #print 'python -m serial.tools.list_ports    --show the avaliable uart ports'
             sys.exit()
         elif opt in ("-p", "--port"):
             port = string.atoi(arg)
@@ -85,8 +100,8 @@ def main(argv):
         elif opt in ("-o", "--output"):
             outputfile = arg
         elif opt in ("-l", "--list"):
-			print(serial_ports())
-			sys.exit(2)
+			#print(serial_ports())
+			list_ports()
         else:
             print 'Wrong pararmeters, try: python logtool.py -h'
 
