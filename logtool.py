@@ -59,7 +59,7 @@ def list_ports():
 def main(argv):
     port = 1
     baud = 115200
-    outputfile = 'log.log'
+    outputfile = 'log'
     print 'CommTool V0.3'
     try:
         opts, args = getopt.getopt(argv,"hlp:o:b:",["help","list","port=","baudrate=","output="])
@@ -98,7 +98,7 @@ def main(argv):
             baud = string.atoi(arg)
             print 'baud', baud
         elif opt in ("-o", "--output"):
-            outputfile = arg
+            outputfile = arg + "_COM" + str(port) + ".log"
         elif opt in ("-l", "--list"):
 			#print(serial_ports())
 			list_ports()
